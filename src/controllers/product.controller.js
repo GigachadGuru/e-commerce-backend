@@ -14,11 +14,12 @@ const getAllProducts = async (req,res) => {
         const sortField = allowedSortFields.includes(sortBy)?sortBy:"createdAt";
         const products = await prisma.product.findMany({
             where,
-            orderBy = {[sortBy]:order==="desc"?"desc":"asc"}
+            orderBy:{[sortField]:order==="desc"?"desc":"asc"}
         })
         res.json({count:products.length,products});
     }
     catch(err){
+        console.error(err);
         res.status(500).json({error : "Something went wrong"});
     }
 }
@@ -33,7 +34,7 @@ const getProductById = async (req,res) => {
         where:{id}
     })
     if(!product){
-        res.status(400).json({error:"Product Not Found"});
+        return  res.status(400).json({error:"Product Not Found"});
     }
     res.json({product});
     }
@@ -97,7 +98,7 @@ const deleteProduct = async (req,res) => {
         await prisma.product.delete({
             where:{id}
         })
-        res.json({error:"Product deleted"});
+        res.json({message:"Product deleted"});
     }
     catch(err){
         if(err.code == "P2025"){

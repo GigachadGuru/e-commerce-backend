@@ -44,14 +44,15 @@ model Product{
 }
 
 model Order {
-  id        Int         @id @default(autoincrement())
-  userId    Int
-  total     Float
-  status    OrderStatus @default(PENDING)
-  createdAt DateTime    @default(now())
+  id                Int         @id @default(autoincrement())
+  userId            Int
+  total             Float
+  status            OrderStatus @default(PENDING)
+  razorpayOrderId   String?
+  createdAt         DateTime    @default(now())
 
-  user      User        @relation(fields: [userId], references: [id])
-  items     OrderItem[]
+  user              User        @relation(fields: [userId], references: [id])
+  items             OrderItem[]
 }
 
 model OrderItem {

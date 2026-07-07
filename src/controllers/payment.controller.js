@@ -8,7 +8,7 @@ const razorpay = new Razorpay({
     key_secret: process.env.RAZORPAY_KEY_SECRET
 })
 
-const intiatePayment = async (req , res) => {
+const initiatePayment = async (req , res) => {
     try{
         const orderId = parseInt(req.params.orderId,10);
         const order = await prisma.order.findUnique({
@@ -85,4 +85,4 @@ const verifyPayment = async (req,res) => {
     }
 }
 
-module.exports= {intiatePayment,verifyPayment};
+module.exports= {initiatePayment,verifyPayment};

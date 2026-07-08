@@ -46,16 +46,14 @@ const getProductById = async (req,res) => {
 const createProduct = async (req,res) => {
     try{
         const {name,description,price,stock,imageUrl} = req.body;
-        if(!name || !price){
-            return res.status(400).json({error:"Name and Price are required"});
-        }
+        
 
         const product = await prisma.product.create({
             data:{
                 name,
                 description,
-                price: parseFloat(price),
-                stock: stock!==undefined?parseInt(stock,10):0,
+                price,
+                stock: stock!==undefined?stock:0,
                 imageUrl
             }
         })
@@ -73,15 +71,15 @@ const updateProduct = async (req,res) => {
         const data ={}
         if (name        !== undefined) data.name        = name
         if (description !== undefined) data.description = description
-        if (price       !== undefined) data.price       = parseFloat(price)
-        if (stock       !== undefined) data.stock       = parseInt(stock, 10)
+        if (price       !== undefined) data.price       = price
+        if (stock       !== undefined) data.stock       = stock
         if (imageUrl    !== undefined) data.imageUrl    = imageUrl
 
         const updatedProduct = await prisma.product.update({
             where: {id},
             data
         })
-        res.status(201).json({message:"Product updated"});
+        res.status(200).json({message:"Product updated"});
 
     }
     catch(err){

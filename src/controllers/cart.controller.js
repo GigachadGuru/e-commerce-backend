@@ -22,9 +22,6 @@ const addToCart = async (req,res) => {
     try{
         const {productId,quantity} = req.body;
 
-        if(!productId ){
-            return res.status(400).json({error:"Product Id is required"});
-        }
         const product = await prisma.product.findUnique({
             where:{id:parseInt(productId,10)}
         })
@@ -32,7 +29,7 @@ const addToCart = async (req,res) => {
         if(!product){
             return res.status(400).json({error:"Product not found"});
         }
-        const qty = quantity!==undefined ?parseInt(quantity,10):1;
+        const qty = quantity!==undefined ?quantity:1;
 
         const existingItem = await prisma.cartItem.findFirst({
             where:{
@@ -68,7 +65,7 @@ const updateCartItem = async (req , res) => {
         const id = parseInt(req.params.id,10);
         const {quantity} = req.body;
 
-        if(quantity=== undefined || parseInt(quantity,10)<1){
+        if(quantity=== undefined || quantity<1){
             return res.status(400).json({error:"Quantity must be atleast one"});
         }
         const cartItem = await prisma.cartItem.findUnique({

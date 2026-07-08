@@ -23,7 +23,7 @@ const initiatePayment = async (req , res) => {
         if(order.status !== "PENDING"){
             return res.status(400).json({error:"Order has no pending payment"});
         }
-
+        console.log("Order fetched from DB:", order);
         const razorpayOrder = await razorpay.orders.create({
             amount:Math.round(order.total*100),
             currency:"INR",
@@ -43,6 +43,7 @@ const initiatePayment = async (req , res) => {
         })
     }
     catch(err){
+        console.error("CRITICAL ERROR IN INITIATE-PAYMENT:", err);
         res.status(500).json({error:"Something went wrong"});
     }
 }
@@ -81,6 +82,7 @@ const verifyPayment = async (req,res) => {
         res.status(201).json({message:"Payment Verified Successfully",order:updatedOrder});
     }
     catch(err){
+        console.error(err);
         res.status(500).json({error:"Something Went Wrong"});
     }
 }

@@ -5,9 +5,7 @@ const prisma = require("../config/db");
 const register = async (req,res) =>{
     try{
         const {name,email,password} = req.body;
-        if(!name||!email||!password){
-            return res.status(400).json({error:"All fields are required"});
-        }
+        
         const existingUser = await prisma.user.findUnique({where:{email}});
         if (existingUser){
             return res.status(400).json({error:"Mail Already Registered"});
@@ -37,9 +35,7 @@ const login = async (req,res) => {
     try{
         const {email,password} = req.body;
 
-        if(!email || !password){
-            return res.status(400).json("All Fields Are to be Filled");
-        }
+        
         const user = await prisma.user.findUnique({
               where: {email}
          });

@@ -1,9 +1,10 @@
 
 const prisma = require("../config/db");
+const catchAsync = require("../utils/catchAsync");
 
 
-const getCart = async (req, res) => {
-    try{
+const getCart = catchAsync(async (req, res) => {
+    
         const cartItems = await prisma.cartItem.findMany({
             where: {userId:req.user.id},
             include: {product:true}
@@ -12,14 +13,10 @@ const getCart = async (req, res) => {
             (sum,item) => sum + item.product.price*item.quantity,0
         )
         res.json({count:cartItems.length,total,cartItems});
-    }
-    catch(err){
-        res.status(500).json({error:"Something went wrong"});
-    }
-}
+})
 
-const addToCart = async (req,res) => {
-    try{
+const addToCart = catchAsync(async (req,res) => {
+    
         const {productId,quantity} = req.body;
 
         const product = await prisma.product.findUnique({
@@ -54,14 +51,11 @@ const addToCart = async (req,res) => {
             })
         }
         res.status(201).json({message:"Item added to cart"});
-    }
-    catch(err){
-        res.status(500).json({error:"Something Went wrong"});
-    }
-}
+    
+})
 
-const updateCartItem = async (req , res) => {
-    try{
+const updateCartItem = catchAsync(async (req , res) => {
+   
         const id = parseInt(req.params.id,10);
         const {quantity} = req.body;
 
@@ -83,14 +77,11 @@ const updateCartItem = async (req , res) => {
             data: {quantity:parseInt(quantity,10)}
         });
         res.status(201).json({message:"Cart item updated",cartItem:updatedItem});
-    }
-    catch(err){
-        res.status(500).json({error:"Something Went Wrong"});
-    }
+    
 }
-
-const removeCartItem = async (req,res) => {
-    try{
+)
+const removeCartItem = catchAsync(async (req,res) => {
+ 
         const id = parseInt(req.params.id,10);
         const cartItem = await prisma.cartItem.findUnique({
             where:{id}
@@ -106,10 +97,7 @@ const removeCartItem = async (req,res) => {
             where: {id}
         })
         res.status(201).json({message:"Cart Item Removed"});
-    }
-    catch(err){
-        res.status(500).json({error:"Something went wrong"});
-    }
+    
 }
-
+)
 module.exports = {getCart,addToCart,updateCartItem,removeCartItem};

@@ -1,7 +1,8 @@
 const prisma = require("../config/db");
+const catchAsync = require("../utils/catchAsync");
 
-const createOrder = async (req,res) => {
-    try{
+const createOrder = catchAsync(async (req,res) => {
+    
          const cartItems = await prisma.cartItem.findMany({
             where:{userId:req.user.id},
             include:{product:true}
@@ -49,14 +50,11 @@ const createOrder = async (req,res) => {
             return newOrder;
          })
          res.status(201).json({message:"Order Created",order});
-    }
-    catch(err){
-        res.status(500).json({error:"Something went wrong"});
-    }
-}
+    
+})
 
-const getMyOrders = async (req,res) =>  {
-    try{
+const getMyOrders = catchAsync(async (req,res) =>  {
+    
         const orders= await prisma.order.findMany({
             where:{userId:req.user.id},
             include:{items:{include:{product:true}}},
@@ -64,14 +62,11 @@ const getMyOrders = async (req,res) =>  {
         })
 
         res.json({count: orders.length,orders});
-    }
-    catch(err){
-        res.status(500).json({error:"Something Went wrong"});
-    }
-}
+   
+})
 
-const getOrderById = async (req,res) => {
-    try{
+const getOrderById = catchAsync(async (req,res) => {
+  
         const id = parseInt(req.params.id,10);
         const order = await prisma.order.findUnique({
             where:{id},
@@ -85,10 +80,7 @@ const getOrderById = async (req,res) => {
             return res.status(403).json({error:"Not Authorized to Look this order"});
         }
         res.status(200).json({order});
-    }
-    catch(err){
-        res.status(500).json({error:"Something Went Wrong"});
-    }
+   
 }
-
+)
 module.exports = {createOrder,getMyOrders,getOrderById};

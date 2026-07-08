@@ -1,7 +1,6 @@
 const prisma = require("../config/db");
-
-const getAllProducts = async (req,res) => {
-    try{
+const catchAsync = require("../utils/catchAsync");
+const getAllProducts = catchAsync(async (req,res) => {
         const {search,sortBy,order}=req.query;
         const where = {};
         if(search){
@@ -17,16 +16,11 @@ const getAllProducts = async (req,res) => {
             orderBy:{[sortField]:order==="desc"?"desc":"asc"}
         })
         res.json({count:products.length,products});
-    }
-    catch(err){
-        console.error(err);
-        res.status(500).json({error : "Something went wrong"});
-    }
-}
+})
 
-const getProductById = async (req,res) => {
-    try{
-         const id = parseInt(req.params.id,10);
+const getProductById = catchAsync(async (req,res) => {
+    
+    const id = parseInt(req.params.id,10);
     if(isNaN(id)){
         return res.status(400).json({error:"Invalid Product Id"});
     }
@@ -37,14 +31,11 @@ const getProductById = async (req,res) => {
         return  res.status(400).json({error:"Product Not Found"});
     }
     res.json({product});
-    }
-    catch(err){
-        res.status(500).json({error:"Something Went Wrong"});
-    }
-}
+    
+})
 
-const createProduct = async (req,res) => {
-    try{
+const createProduct = catchAsync( async (req,res) => {
+    
         const {name,description,price,stock,imageUrl} = req.body;
         
 
@@ -58,14 +49,11 @@ const createProduct = async (req,res) => {
             }
         })
         res.status(201).json({message:"Product Created",product});
-    }
-    catch(err){
-        res.status(500).json({error:"Something went wrong"});
-    }
-}
+    
+})
 
-const updateProduct = async (req,res) => {
-    try{
+const updateProduct = catchAsync(async (req,res) => {
+   
         const id = parseInt(req.params.id,10);
         const {name,description,price,stock,imageUrl} = req.body;
         const data ={}
@@ -81,30 +69,17 @@ const updateProduct = async (req,res) => {
         })
         res.status(200).json({message:"Product updated"});
 
-    }
-    catch(err){
-        if(err.code =="P2025"){
-            return res.status(404).json({error:"Product Not Found"});
-        }
-        res.status(500).json({error:"Something went wrong"});
-    }
-}
+    
+})
 
-const deleteProduct = async (req,res) => {
-    try{
+const deleteProduct = catchAsync(async (req,res) => {
         const id = parseInt(req.params.id,10);
         await prisma.product.delete({
             where:{id}
         })
         res.json({message:"Product deleted"});
-    }
-    catch(err){
-        if(err.code == "P2025"){
-             return res.status(404).json({error:"Product Not Found"});
-        }
-        res.status(500).json({error:"Something went wrong"});
-    }
-}
+    
+})
 
 module.exports = {
     getAllProducts,

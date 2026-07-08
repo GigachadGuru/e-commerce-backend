@@ -2,14 +2,15 @@ const crypto = require("crypto");
 const prisma = require("../config/db");
 const Razorpay = require("razorpay");
 const { error } = require("console");
+const catchAsync = require("../utils/catchAsync");
 
 const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
     key_secret: process.env.RAZORPAY_KEY_SECRET
 })
 
-const initiatePayment = async (req , res) => {
-    try{
+const initiatePayment = catchAsync(async (req , res) => {
+    
         const orderId = parseInt(req.params.orderId,10);
         const order = await prisma.order.findUnique({
             where:{id:orderId}
@@ -41,15 +42,11 @@ const initiatePayment = async (req , res) => {
             currency:razorpayOrder.currency,
             keyId:process.env.RAZORPAY_KEY_ID
         })
-    }
-    catch(err){
-        console.error("CRITICAL ERROR IN INITIATE-PAYMENT:", err);
-        res.status(500).json({error:"Something went wrong"});
-    }
+    
 }
-
-const verifyPayment = async (req,res) => {
-    try{
+)
+const verifyPayment = catchAsync(async (req,res) => {
+    
         const {
             razorpay_order_id,
             razorpay_payment_id,
@@ -80,11 +77,7 @@ const verifyPayment = async (req,res) => {
             data:{status:"PAID"}
         });
         res.status(201).json({message:"Payment Verified Successfully",order:updatedOrder});
-    }
-    catch(err){
-        console.error(err);
-        res.status(500).json({error:"Something Went Wrong"});
-    }
-}
+   
+})
 
 module.exports= {initiatePayment,verifyPayment};

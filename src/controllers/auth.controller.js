@@ -1,9 +1,10 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const prisma = require("../config/db");
+const catchAsync = require("../utils/catchAsync");
 
-const register = async (req,res) =>{
-    try{
+const register = catchAsync(async (req,res) =>{
+   
         const {name,email,password} = req.body;
         
         const existingUser = await prisma.user.findUnique({where:{email}});
@@ -27,12 +28,10 @@ const register = async (req,res) =>{
                 email : user.email
             }
         })
-    }catch(err){
-        res.status(500).json({error :"Something went wrong"});
-    }
-}
-const login = async (req,res) => {
-    try{
+    
+})
+const login = catchAsync(async (req,res) => {
+    
         const {email,password} = req.body;
 
         
@@ -62,10 +61,7 @@ const login = async (req,res) => {
                 role : user.role
              }
          })
-    }
-    catch(err){
-        res.status(500).json({error: "Something went wrong"});
-    }
- }
+    
+ })
 module.exports = {register,login};
 

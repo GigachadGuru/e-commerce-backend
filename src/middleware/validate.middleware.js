@@ -1,4 +1,4 @@
-const validate = (schema) => {(req,res,next) => {
+const validate = (schema) => (req,res,next) => {
     const result = schema.safeParse(req.body);
 
     if(!result.success){
@@ -12,6 +12,6 @@ const validate = (schema) => {(req,res,next) => {
     next();
 
     
-}}
+}
 
 module.exports = {validate};

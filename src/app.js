@@ -32,6 +32,16 @@ app.use((req,res) =>{
 //global error handler
 app.use((err,req,res,next) =>{ 
     console.error(err.stack);
+    if(err.name === "ZodError"){
+        const errors = err.issue.map((issue)=>({
+            field: issue.path.join("."),
+            message:issue.message
+        }))
+        return res.status(400).json({error:"Validation failed",details:errors});
+    }
+    if(err.code === "P2025"){
+        return res.status(404).json({error:"Record not found"});
+    }
     res.status(err.status || 500).json({error: err.message || "Internal Server Error"});
 })
 

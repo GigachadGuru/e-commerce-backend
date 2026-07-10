@@ -1,5 +1,6 @@
 const prisma = require("../config/db");
 const catchAsync = require("../utils/catchAsync");
+const uploadToCloudinary = require("../utils/uploadToCloudinary");
 const getAllProducts = catchAsync(async (req,res) => {
         const {search,sortBy,order}=req.query;
         const where = {};
@@ -36,8 +37,12 @@ const getProductById = catchAsync(async (req,res) => {
 
 const createProduct = catchAsync( async (req,res) => {
     
-        const {name,description,price,stock,imageUrl} = req.body;
-        
+        const {name,description,price,stock} = req.body;
+        let imageUrl;
+        if(req.file){
+            const result = await uploadToCloudinary(req.file.buffer);
+            imageUrl =result.secure_url;
+        }
 
         const product = await prisma.product.create({
             data:{
@@ -55,7 +60,12 @@ const createProduct = catchAsync( async (req,res) => {
 const updateProduct = catchAsync(async (req,res) => {
    
         const id = parseInt(req.params.id,10);
-        const {name,description,price,stock,imageUrl} = req.body;
+        const {name,description,price,stock} = req.body;
+        if(req.file){
+            const result = await uploadToCloudinary(req.file.buffer);
+            imageUrl =result.secure_url;
+        }
+        
         const data ={}
         if (name        !== undefined) data.name        = name
         if (description !== undefined) data.description = description

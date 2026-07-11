@@ -58,7 +58,7 @@ const createProduct = catchAsync( async (req,res) => {
 })
 
 const updateProduct = catchAsync(async (req,res) => {
-   
+        let imageUrl;
         const id = parseInt(req.params.id,10);
         const {name,description,price,stock} = req.body;
         if(req.file){
